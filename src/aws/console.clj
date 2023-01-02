@@ -115,21 +115,3 @@
 ;;     bb aws.console.clj --profile production --path "/iam/home?region=us-east-2"
 ;;     bb aws.console.clj --profile production --url https://ap-southeast-1.console.aws.amazon.com/athena/home\?region\=ap-southeast-1\#/query-editor
 ;;     Can we make it like `aws.console https://ap-southeast-1.console.aws.amazon.com/athena/home\?region\=ap-southeast-1\#/query-editor --profile production or should we append --optoins
-
-;; Wanna try to extract
-
-
-#_ (deftask console
-    "Logs you into the AWS console using credentials"
-    [_ env ENV edn "Config map"
-     _ profile PROFILE_NAME str "Profile name to use from ~/.aws/credentials"
-     _ account ACCOUNT_ID str "Account id"
-     _ role ROLE_NAME str "Role name"
-     _ via VIA edn "edn vector of {:account-id ... :role-name ... :force? }"
-     _ force bool "Removes old credentials and re-fetches credentials"
-     _ session-name SESSION_NAME nil str "Name of session that endsup in console"
-     _ incognito false bool "Use incognito mode"]
-    (let [creds (cli/aws-credentials (prep-args))]
-      (if incognito
-        (cli/aws-console-incognito creds)
-        (cli/aws-console creds))))
