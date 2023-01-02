@@ -1,0 +1,11 @@
+{:deps {deps/local {:local/root "."}}
+
+ :tasks
+ {install (shell "bbin" "install" ".")
+  generate-inline-script tasks/generate-inline-script
+  install-inline (do (run 'generate-inline-script)
+                     (shell "bbin" "install" "target/inline.clj" "--as" "aws.console"))
+ }
+
+ :bbin/bin {aws.console {:main-opts ["-f" "src/aws/console.clj"]}}
+ }
