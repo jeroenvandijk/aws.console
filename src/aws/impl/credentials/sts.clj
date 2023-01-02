@@ -37,7 +37,9 @@
                      :request {:RoleArn         (role-arn {:account-id account-id
                                                            :role-name role-name})
                                :RoleSessionName session-name}})]
-    (or Credentials
+    (or (-> Credentials
+            ;; This needs to be added for aws cli tool, move to higher level?
+            (assoc :Version 1))
         ;; REVIEW Is this error message enough?
         (throw (ex-info (get-in ErrorResponse [:Error :Message])
                         ErrorResponse)))))
