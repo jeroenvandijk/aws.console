@@ -22,9 +22,11 @@
   [{print-creds? :print-creds
     print-url? :print-url
     debug? :debug
+    force? :force
     :keys [profile
            incognito
            sso-url
+
            sts account role via session-name region] :as opts}]
   (let [creds (cond (.ready *in*)
                     (-> (slurp *in*)
@@ -34,7 +36,8 @@
                     (do
                       (assert (and account role))
                       (with-saved-credentials {:account account
-                                               :role role}
+                                               :role role
+                                               :force? force?}
                         (fn []
                           (let [sso-credentials (requiring-resolve 'aws.impl.credentials.sso/get-sso-credentials)]
                             (sso-credentials {:account-id account :role-name role :region region :start-url sso-url})))))
@@ -44,7 +47,8 @@
                       (assert (and account role sts))
                       (with-saved-credentials
                         {:account account
-                         :role role}
+                         :role role
+                         :force? force?}
                         (fn []
                           (when debug?
                             (println (str "No credentials found, retrieving via profile " sts)))
@@ -58,7 +62,7 @@
                                           :region (or region "eu-central-1")})))))
                     ;; --region sa-east-1 is much slower
 
-                    ;; profile
+                    ;; TODO keep cache per profile? With force this would be removed
                     profile
                     (creds-by-profile profile)
 
@@ -96,6 +100,7 @@
                                           :session-name :string
 
                                           :debug :boolean
+                                          :force :boolean
 
                                           :browser :keyword
                                           :incognito :boolean}}))

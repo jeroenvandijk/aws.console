@@ -47,8 +47,9 @@
 
 
 (defn with-saved-credentials
-  [{:keys [account role]} thunk]
-  (or (saved-credentials account role)
+  [{:keys [account role force?] :as args} thunk]
+  (or (when-not force?
+        (saved-credentials account role))
       (let [creds (thunk)]
         (save-credentials! creds account role)
         creds)))
