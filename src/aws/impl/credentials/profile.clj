@@ -30,8 +30,11 @@
 
 (defn get-credentials-via-cmd
   [cmd]
-  (let [json (run-credential-process-cmd cmd)]
-    (json/parse-string json true)))
+  (let [json (run-credential-process-cmd cmd)
+  		ret (json/parse-string json true)]
+    (when-not (or (:AccessKeyId ret) (:SecretAccessKey ret))
+	  (throw (ex-info (str "Failed cmd " ret) {:babashka/exit 1 :cmd cmd :ret (keys ret)})))
+	ret))
 
 
 (defn get-credentials-by-profile
