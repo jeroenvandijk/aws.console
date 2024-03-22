@@ -17,13 +17,12 @@
 
 (defn run-credential-process-cmd
   [cmd]
-  (let [[binary-name & args :as cmd] (tokenize cmd)
-        current-binary-name (last (.split (System/getenv "_") "/"))]
-    (if (and
-          (= current-binary-name binary-name)
-          (not= current-binary-name "bb"))
+  (let [[binary-name & args :as cmd] (tokenize cmd)]
+    (if (= binary-name "aws.console")
       (run-cmd-in-process args)
-      (let [{:keys [exit out err] :as res} (apply clojure.java.shell/sh binary-name args)]
+
+	  ;; External way of getting (nested) credentials
+      (let [{:keys [exit out err] :as res} (clojure.java.shell/sh cmd)]
         (if (zero? exit)
           out
           (throw (ex-info (str "Non-zero exit: " (pr-str err)) {})))))))
