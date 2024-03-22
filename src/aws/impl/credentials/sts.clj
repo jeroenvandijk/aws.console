@@ -22,8 +22,8 @@
 (defn assume-role
   [{:keys [creds account-id role-name session-name region]}]
   (let [sts (aws/client {:api :sts
-                         ;; Does this do something?
-                         ;; :region (or region "us-easdt-1")
+                         ;; Does this do something? E.g. --region eu-central-1 --print-creds --force VS --region us-east-1 --print-creds --force
+                         :region (or region "us-east-1")
                          :credentials-provider
                          (reify CredentialsProvider
                            (fetch
